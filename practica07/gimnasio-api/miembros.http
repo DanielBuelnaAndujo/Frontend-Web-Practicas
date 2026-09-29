@@ -1,0 +1,80 @@
+### Práctica - Miembros del gimnasio
+###
+### CÓMO SE USA:
+###   1. Extensión "REST Client" (humao.rest-client) en VS Code.
+###   2. npm run start:dev
+###   3. Clic en "Send Request" arriba de cada petición.
+###
+### OJO: Todo vive en memoria. El repositorio inicializa con 3 miembros 
+### (Juan, Ana y Luis). Si reinicias el servidor, el arreglo vuelve a su estado original.
+
+@host = http://localhost:3000
+
+### 1. Listar todos los miembros iniciales  ->  200
+GET {{host}}/miembros
+
+
+### 2. Buscar un miembro que SÍ existe (Juan, id 1)  ->  200
+GET {{host}}/miembros/1
+
+
+### 3. Buscar un miembro que NO existe  ->  404
+GET {{host}}/miembros/99
+
+
+### 4. Crear un nuevo miembro  ->  201 + header Location
+###    (Al ser el cuarto, se le asignará el ID 4)
+POST {{host}}/miembros
+Content-Type: application/json
+
+{
+  "nombre": "Pedro",
+  "correo": "pedro@test.com",
+  "membresia": "Mensual"
+}
+
+
+### 5. Cuerpo mal formado (faltan campos obligatorios)  ->  400
+POST {{host}}/miembros
+Content-Type: application/json
+
+{
+  "nombre": "FaltaCorreoYMembresia"
+}
+
+
+### 6. Actualizar el miembro que acabamos de crear (id 4)  ->  200
+###    Nota: Solo mandamos los campos a actualizar
+PATCH {{host}}/miembros/4
+Content-Type: application/json
+
+{
+  "membresia": "Anual",
+  "activo": false
+}
+
+
+### 7. Actualizar un miembro que NO existe  ->  404
+PATCH {{host}}/miembros/99
+Content-Type: application/json
+
+{
+  "nombre": "Fantasma"
+}
+
+
+### 8. Eliminar el miembro recién creado y editado (id 4)  ->  200
+DELETE {{host}}/miembros/4
+
+
+### 9. Eliminar un miembro que ya no existe o nunca existió  ->  404
+DELETE {{host}}/miembros/99
+
+
+### 10. Listar de nuevo para comprobar que se eliminó el id 4  ->  200
+GET {{host}}/miembros
+
+
+### 11. AISLAMIENTO: Las inscripciones siguen funcionando igual  ->  200
+###     (Esto prueba empíricamente que agregar el módulo de Miembros no rompió nada)
+GET {{host}}/inscripciones
